@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "visu"
+version = "0.1.0"
+description = "Interactive algorithm & data structure visualizer built with GTK4 and libadwaita."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "iIonel" }]
+dependencies = [
+    "PyGObject>=3.42",
+    "pycairo>=1.20",
+]
+
+[project.scripts]
+visu = "visu.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["visu*"]

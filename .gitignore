@@ -1,0 +1,74 @@
+# Byte-compiled / cached Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+sdist/
+wheels/
+*.egg
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+share/python-wheels/
+MANIFEST
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# Tests, coverage, type checkers
+tests/
+.pytest_cache/
+.cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# Flatpak / build artifacts
+build-dir/
+.flatpak-builder/
+repo/
+*.flatpak
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local environment / secrets
+.env
+.env.*
+*.local
+
+# Logs
+*.log

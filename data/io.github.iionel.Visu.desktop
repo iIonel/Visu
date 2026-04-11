@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Visu
+GenericName=Algorithm Visualizer
+Comment=Write pseudocode, watch data structures come alive
+Exec=visu
+Icon=io.github.iionel.Visu
+Terminal=false
+Type=Application
+Categories=Development;Education;Science;
+StartupNotify=true
+Keywords=algorithm;data structure;visualizer;pseudocode;education;

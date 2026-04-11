@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.iionel.Visu</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Visu</name>
+  <summary>Interactive algorithm and data structure visualizer</summary>
+  <description>
+    <p>
+      Visu bridges the gap between pseudocode and the mental model of how
+      algorithms and data structures behave. Write pseudocode in the editor,
+      press Run, and watch arrays, stacks, queues, linked lists and binary
+      search trees animate step by step.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Simple pseudocode language with arrays, stacks, queues, lists and BSTs</li>
+      <li>Step-by-step timeline with play / pause / scrub controls</li>
+      <li>Minimalist split layout — canvas on the left, editor on the right</li>
+      <li>Built-in pseudocode reference and example programs</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.iionel.Visu.desktop</launchable>
+  <url type="homepage">https://github.com/iionel/Visu</url>
+  <url type="bugtracker">https://github.com/iionel/Visu/issues</url>
+  <developer id="io.github.iionel">
+    <name>iIonel</name>
+  </developer>
+  <content_rating type="oars-1.1" />
+  <categories>
+    <category>Development</category>
+    <category>Education</category>
+  </categories>
+  <releases>
+    <release version="0.1.0" date="2026-04-11">
+      <description>
+        <p>Initial release.</p>
+      </description>
+    </release>
+  </releases>
+</component>
