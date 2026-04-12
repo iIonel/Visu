@@ -178,7 +178,6 @@ visu/
     ui/                 Window, panels, timeline, dialogs
 data/                   Desktop file, AppStream metadata, icon
 flatpak/                Flathub manifest
-tests/                  Unit and integration tests for the interpreter
 ```
 
 ---
