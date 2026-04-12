@@ -31,6 +31,20 @@
     <category>Development</category>
     <category>Education</category>
   </categories>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/iIonel/Visu/main/data/screenshots/graph-building.png</image>
+      <caption>Building a directed graph step by step</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/iIonel/Visu/main/data/screenshots/graph-complete.png</image>
+      <caption>Completed graph with array visualization and output</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/iIonel/Visu/main/data/screenshots/pseudocode-reference.png</image>
+      <caption>Built-in pseudocode reference guide</caption>
+    </screenshot>
+  </screenshots>
   <releases>
     <release version="0.1.0" date="2026-04-11">
       <description>
