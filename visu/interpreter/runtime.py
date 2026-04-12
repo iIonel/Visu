@@ -75,7 +75,8 @@ class Interpreter:
             self._exec_stmt(s)
 
     def _exec_stmt(self, s: Node):
-        self.highlights.clear()
+        if s.kind != "highlight":
+            self.highlights.clear()
         handler = getattr(self, f"_stmt_{s.kind}", None)
         if handler is None:
             raise VisuRuntimeError(s.line, f"unknown statement {s.kind}")
