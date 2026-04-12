@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from ...interpreter import Snapshot, Structure
@@ -106,9 +105,3 @@ class StackRenderer(StructureRenderer):
             t.font_sans, max(9.0, (t.index_size + 1) * scale),
             t.muted,
         )
-
-    @staticmethod
-    def _fmt(v):
-        if isinstance(v, float) and v.is_integer():
-            return str(int(v))
-        return str(v)

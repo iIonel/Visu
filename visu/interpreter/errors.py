@@ -1,5 +1,3 @@
-
-
 class VisuLanguageError(Exception):
     pass
 

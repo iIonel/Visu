@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from ...interpreter import Snapshot, Structure
@@ -84,9 +83,3 @@ class ArrayRenderer(StructureRenderer):
             max(8.0, t.index_size * scale),
             (*t.muted[:3], 0.8 * pose.alpha),
         )
-
-    @staticmethod
-    def _fmt(v):
-        if isinstance(v, float) and v.is_integer():
-            return str(int(v))
-        return str(v)

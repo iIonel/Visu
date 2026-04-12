@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -80,3 +79,15 @@ class StructureRenderer(ABC):
             self.theme.label_size,
             self.theme.muted,
         )
+
+    @staticmethod
+    def _fmt(v):
+        if isinstance(v, bool):
+            return "true" if v else "false"
+        if isinstance(v, float) and v.is_integer():
+            return str(int(v))
+        if isinstance(v, list):
+            return "[" + ", ".join(StructureRenderer._fmt(x) for x in v) + "]"
+        if v is None:
+            return "null"
+        return str(v)

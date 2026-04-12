@@ -309,15 +309,3 @@ class GraphRenderer(StructureRenderer):
                 t.font_mono, max(9.0, 10.0 * scale),
                 (*t.muted[:3], 0.9 * pose.alpha),
             )
-
-    @staticmethod
-    def _fmt(v):
-        if isinstance(v, bool):
-            return "true" if v else "false"
-        if isinstance(v, float) and v.is_integer():
-            return str(int(v))
-        if isinstance(v, list):
-            return "[" + ", ".join(GraphRenderer._fmt(x) for x in v) + "]"
-        if v is None:
-            return "null"
-        return str(v)

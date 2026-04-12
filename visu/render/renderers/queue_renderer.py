@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from ...interpreter import Snapshot, Structure
@@ -101,9 +100,3 @@ class QueueRenderer(StructureRenderer):
             t.font_sans, max(9.0, t.value_size * scale),
             (*fg[:3], pose.alpha),
         )
-
-    @staticmethod
-    def _fmt(v):
-        if isinstance(v, float) and v.is_integer():
-            return str(int(v))
-        return str(v)

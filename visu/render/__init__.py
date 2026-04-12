@@ -1,4 +1,3 @@
-
 from .canvas import VisuCanvas
 from .theme import DARK_THEME, LIGHT_THEME, Theme
 

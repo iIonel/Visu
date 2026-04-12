@@ -1,42 +1,31 @@
 # Visu
 
 Visu is an interactive visualizer for classic algorithms and data structures.
-You write a small pseudocode program in the editor, press **Run**, and the
-canvas replays every step on the data structures you declared. A timeline at
-the bottom of the canvas lets you scrub backwards and forwards through the
-execution like a video.
+You write pseudocode in the built-in editor, press **Run**, and the canvas
+replays every step on the structures you declared. A timeline at the bottom
+lets you scrub backwards and forwards through the execution like a video
+player for your code.
 
-Visu is built with Python, GTK 4 and libadwaita, and is designed to feel at
-home on modern GNOME desktops.
-
----
-
-## Highlights
-
-- **Eight built-in structures.** `array`, `stack`, `queue`, `deque`, linked
-  `list`, `set`, `map`, and directed or undirected `graph`. Each one has its
-  own renderer on the canvas.
-- **Step-by-step replay.** Every statement produces a snapshot. The timeline
-  exposes play, pause, and frame-by-frame stepping so you can study an
-  algorithm at your own pace.
-- **A small, readable pseudocode language.** Familiar `if` / `for` / `while`
-  control flow, simple expressions, and direct method calls on the
-  structures you declare. No types to learn, no boilerplate.
-- **In-app reference.** A friendly tour of the language ships with the
-  application (menu → *Pseudocode reference*, or press `F1`).
-- **File support.** Open and save `.visu` source files; the most recent
-  file is restored on the next launch.
-- **Native look and feel.** Adwaita styling, dark mode by default, keyboard
-  shortcuts, and a Flatpak manifest targeting Flathub.
+Visu is built with Python, GTK 4 and libadwaita, and targets modern GNOME
+desktops.
 
 ---
 
-## Screenshots
+## What it does
 
-The split layout puts the canvas on the left and the editor on the right,
-with the playback timeline anchored under the canvas. Output from `print`
-calls appears in the panel below the editor, and the line currently being
-executed is highlighted as you scrub the timeline.
+Visu ships a small, purpose-built pseudocode language with eight data
+structures: `array`, `stack`, `queue`, `deque`, linked `list`, `set`, `map`,
+and directed or undirected `graph`. Each structure has its own animated
+renderer on the canvas.
+
+Every statement you execute creates a **snapshot**. The timeline lets you
+play, pause, step forward, step backward, and adjust playback speed so you
+can study an algorithm at your own pace.
+
+The editor highlights the line currently being executed. Output from `print`
+calls appears in a dedicated panel below the editor. A built-in pseudocode
+reference (press `F1` or open it from the menu) documents every structure,
+method, and language feature with worked examples.
 
 ---
 
@@ -44,9 +33,8 @@ executed is highlighted as you scrub the timeline.
 
 ### From source
 
-Visu depends on PyGObject and pycairo, which in turn need the system GTK 4
-and libadwaita libraries. Install the platform packages first, then run
-the module directly from the repository.
+Visu depends on PyGObject and pycairo, which need the system GTK 4 and
+libadwaita libraries installed first.
 
 ```bash
 # Debian / Ubuntu
@@ -59,13 +47,13 @@ sudo dnf install python3-gobject gtk4 libadwaita python3-cairo
 sudo pacman -S python-gobject gtk4 libadwaita python-cairo
 ```
 
-Then, from the project root:
+Run directly from the repository:
 
 ```bash
 python3 -m visu
 ```
 
-Optionally install the package into your environment:
+Or install the package:
 
 ```bash
 pip install .
@@ -74,8 +62,7 @@ visu
 
 ### Flatpak
 
-A Flathub-ready manifest lives at `flatpak/io.github.iionel.Visu.yml`. To
-build and install it locally:
+A Flathub-ready manifest lives at `flatpak/io.github.iionel.Visu.yml`:
 
 ```bash
 flatpak install flathub org.gnome.Platform//47 org.gnome.Sdk//47
@@ -86,19 +73,20 @@ flatpak run io.github.iionel.Visu
 
 ---
 
-## Using Visu
+## Quick start
 
-1. Launch the application. The editor starts with a small bundled example
-   so you have something to run immediately.
+1. Launch the application. The editor loads a bundled example so you can
+   run something immediately.
 2. Edit or replace the pseudocode on the right.
-3. Press **Run** in the header bar (or `Ctrl+Return` / `F5`).
-4. Watch the structures animate on the left and use the timeline to step
-   through the execution.
-5. Use the menu (the button on the right of the header bar) to open or
-   save files, load the bundled example, browse the pseudocode reference,
-   or read the about dialog.
+3. Press **Run** (`Ctrl+Return` or `F5`).
+4. Watch the structures animate on the left. Use the timeline to step
+   through the execution frame by frame.
+5. Open the menu to load files, browse the pseudocode reference, or read
+   the about dialog.
 
-### Keyboard shortcuts
+---
+
+## Keyboard shortcuts
 
 | Action                          | Shortcut             |
 | ------------------------------- | -------------------- |
@@ -109,27 +97,34 @@ flatpak run io.github.iionel.Visu
 | Undo / Redo                     | `Ctrl+Z` / `Ctrl+Y`  |
 | Pseudocode reference            | `F1`                 |
 | Quit                            | `Ctrl+Q`             |
+| Zoom in / out (canvas)          | `+` / `-` or scroll  |
+| Reset zoom and pan              | `0`                  |
 
 ---
 
 ## The pseudocode language
 
-Visu's language is intentionally small. The complete reference is built
-into the application; the snippet below is enough to get started.
+The language is intentionally small. The full reference ships inside the
+application; the snippet below covers the essentials.
+
+### Declaring structures
 
 ```text
-# Declare structures by kind and name.
 array a = [5, 2, 9, 1]
 stack s = []
 queue q = []
 deque d = []
 list  l = [1, 2, 3]
-set   u = []
+set   u = [1, 2, 2, 3]
 map   m = []
 graph g = directed
+```
 
-# Operate on them with method calls.
+### Operating on structures
+
+```text
 a.push(4)
+a[0] = 99
 swap(a, 0, 1)
 s.push(10)
 q.enqueue("task")
@@ -139,8 +134,11 @@ u.add("seen")
 m.set("alice", 30)
 g.node("A")
 g.edge("A", "B", 3.5)
+```
 
-# Standard control flow.
+### Control flow
+
+```text
 if a.length > 0:
     print("not empty")
 else:
@@ -154,15 +152,18 @@ end
 while x < 10:
     x = x + 1
 end
+```
 
-# Built-in helpers.
-print(a, "done")
-highlight(a, 0, 1)
+### Built-in helpers
+
+```text
+print(x, y, ...)
+highlight(target, ...)
+swap(arr, i, j)
 ```
 
 A complete tour with worked examples (bubble sort, breadth-first search,
-word frequency counting) is available inside the app at any time via the
-menu or `F1`.
+word frequency counting) is available inside the app via the menu or `F1`.
 
 ---
 
@@ -171,33 +172,33 @@ menu or `F1`.
 ```
 visu/
     app.py              Application entry point and global actions
-    docs.py              Pseudocode reference content
-    interpreter/         Lexer, parser, runtime, and snapshot recording
-    render/              Canvas renderers for each structure kind
-    ui/                  Window, panels, timeline, dialogs
-data/                    Desktop file, AppStream metadata, icon
-flatpak/                 Flathub manifest
-tests/                   Unit tests for the interpreter
+    docs.py             Pseudocode reference content
+    interpreter/        Lexer, parser, runtime, and snapshot recording
+    render/             Canvas, animators, and renderers for each structure
+    ui/                 Window, panels, timeline, dialogs
+data/                   Desktop file, AppStream metadata, icon
+flatpak/                Flathub manifest
+tests/                  Unit and integration tests for the interpreter
 ```
 
 ---
 
 ## Development
 
-Run the test suite from the project root:
+Run the test suite:
 
 ```bash
 python3 -m pytest
 ```
 
-When working on the interpreter, the lexer, parser, runtime, and snapshot
-machinery live under `visu/interpreter/`. Each canvas renderer is a small
-class under `visu/render/renderers/` that takes a snapshot and draws onto a
-Cairo context.
+The interpreter pipeline lives under `visu/interpreter/` (lexer, parser,
+runtime, snapshots, structures). Each canvas renderer is a class under
+`visu/render/renderers/` that computes a natural layout and draws onto a
+Cairo context. The UI layer under `visu/ui/` wires everything together with
+GTK 4 widgets.
 
 ---
 
 ## License
 
-Visu is released under the MIT License. See the project metadata for
-details.
+MIT

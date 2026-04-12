@@ -1,15 +1,3 @@
-"""Friendly, structured pseudocode reference shown in the docs window.
-
-Each section is a small dict with an ``id``, ``title``, an optional emoji
-``icon`` for the sidebar, and a list of content ``blocks``. A block is
-one of:
-
-    {"kind": "p",    "text": "..."}    # paragraph
-    {"kind": "code", "text": "..."}    # code sample
-    {"kind": "tip",  "text": "..."}    # friendly callout
-    {"kind": "h",    "text": "..."}    # subheading inside a section
-"""
-
 from __future__ import annotations
 
 

@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from ...interpreter import Snapshot, Structure
@@ -119,9 +118,3 @@ class LinkedListRenderer(StructureRenderer):
         cr.arc(pose.x + w * 0.18, pose.y, max(1.5, 2.0 * scale), 0, 6.283185)
         set_source(cr, (*t.muted[:3], pose.alpha))
         cr.fill()
-
-    @staticmethod
-    def _fmt(v):
-        if isinstance(v, float) and v.is_integer():
-            return str(int(v))
-        return str(v)

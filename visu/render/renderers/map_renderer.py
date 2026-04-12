@@ -97,15 +97,3 @@ class MapRenderer(StructureRenderer):
             t.font_sans, max(10.0, 14.0 * scale),
             (*t.muted[:3], 0.8),
         )
-
-    @staticmethod
-    def _fmt(v):
-        if isinstance(v, bool):
-            return "true" if v else "false"
-        if isinstance(v, float) and v.is_integer():
-            return str(int(v))
-        if isinstance(v, list):
-            return "[" + ", ".join(MapRenderer._fmt(x) for x in v) + "]"
-        if v is None:
-            return "null"
-        return str(v)

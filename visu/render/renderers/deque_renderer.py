@@ -107,13 +107,3 @@ class DequeRenderer(StructureRenderer):
             t.font_sans, max(9.0, t.value_size * scale),
             (*fg[:3], pose.alpha),
         )
-
-    @staticmethod
-    def _fmt(v):
-        if isinstance(v, bool):
-            return "true" if v else "false"
-        if isinstance(v, float) and v.is_integer():
-            return str(int(v))
-        if isinstance(v, list):
-            return "[" + ", ".join(DequeRenderer._fmt(x) for x in v) + "]"
-        return str(v)

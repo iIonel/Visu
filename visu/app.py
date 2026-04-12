@@ -1,20 +1,34 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import gi
 
 gi.require_version("Adw", "1")
+gi.require_version("Gdk", "4.0")
 gi.require_version("Gtk", "4.0")
-from gi.repository import Adw, Gio
+from gi.repository import Adw, Gdk, Gio, Gtk
 
 from . import APP_ID
 from .ui import VisuWindow
+
+_DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 
 class VisuApplication(Adw.Application):
     def __init__(self):
         super().__init__(application_id=APP_ID, flags=Gio.ApplicationFlags.DEFAULT_FLAGS)
+        self._register_icon()
         self._window: VisuWindow | None = None
         self._install_actions()
+
+    @staticmethod
+    def _register_icon():
+        icons_dir = _DATA_DIR / "icons"
+        if not icons_dir.is_dir():
+            return
+        theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
+        theme.add_search_path(str(icons_dir))
 
     def _install_actions(self):
         actions = (
