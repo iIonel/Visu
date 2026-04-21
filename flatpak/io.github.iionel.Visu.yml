@@ -24,4 +24,4 @@ modules:
     sources:
       - type: git
         url: https://github.com/iIonel/Visu.git
-        tag: v0.1.0
+        branch: main

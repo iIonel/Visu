@@ -65,7 +65,7 @@ visu
 A Flathub-ready manifest lives at `flatpak/io.github.iionel.Visu.yml`:
 
 ```bash
-flatpak install flathub org.gnome.Platform//47 org.gnome.Sdk//47
+flatpak install flathub org.gnome.Platform//50 org.gnome.Sdk//50
 flatpak-builder --user --install --force-clean build-dir \
     flatpak/io.github.iionel.Visu.yml
 flatpak run io.github.iionel.Visu

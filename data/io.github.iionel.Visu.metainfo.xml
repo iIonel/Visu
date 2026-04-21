@@ -9,15 +9,15 @@
     <p>
       Visu bridges the gap between pseudocode and the mental model of how
       algorithms and data structures behave. Write pseudocode in the editor,
-      press Run, and watch arrays, stacks, queues, linked lists and binary
-      search trees animate step by step.
+      press Run, and watch arrays, stacks, queues, deques, linked lists, sets,
+      maps, and directed or undirected graphs animate step by step.
     </p>
     <p>Features:</p>
     <ul>
-      <li>Simple pseudocode language with arrays, stacks, queues, lists and BSTs</li>
-      <li>Step-by-step timeline with play / pause / scrub controls</li>
-      <li>Minimalist split layout — canvas on the left, editor on the right</li>
-      <li>Built-in pseudocode reference and example programs</li>
+      <li>Simple pseudocode language with eight built-in structures: array, stack, queue, deque, linked list, set, map, and graph</li>
+      <li>Step-by-step timeline with play, pause, step, and scrub controls</li>
+      <li>Minimalist split layout with the canvas on the left and editor on the right</li>
+      <li>Built-in pseudocode reference and example programs (bubble sort, DFS, union-find, and more)</li>
     </ul>
   </description>
   <launchable type="desktop-id">io.github.iionel.Visu.desktop</launchable>
@@ -46,6 +46,16 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="0.1.2" date="2026-04-21">
+      <description>
+        <p>Update AppStream metadata, align documentation with the GNOME 50 runtime, and harden the pseudocode interpreter against pathological input.</p>
+      </description>
+    </release>
+    <release version="0.1.1" date="2026-04-21">
+      <description>
+        <p>Target the GNOME 50 runtime and add continuous integration for the Flatpak build.</p>
+      </description>
+    </release>
     <release version="0.1.0" date="2026-04-11">
       <description>
         <p>Initial release.</p>
