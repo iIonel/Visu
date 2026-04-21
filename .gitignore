@@ -71,3 +71,10 @@ desktop.ini
 
 # Logs
 *.log
+
+# Local context
+context/
+.claude/
+.clauderules
+_CONTEXT.md
+_LOG.md
