@@ -570,10 +570,6 @@ DOCS_SECTIONS: list[dict] = [
 
 
 DEFAULT_EXAMPLE = """\
-# Welcome to Visu.
-# Write pseudocode on the right, press Run, and watch
-# the structures on the left. Scrub the timeline to replay.
-
 graph g = directed
 g.node("A", 0)
 g.node("B", 1)
@@ -592,3 +588,165 @@ end
 
 print("nodes:", g.node_count, "edges:", g.edge_count)
 """
+
+
+BUBBLE_SORT_EXAMPLE = """\
+array a = [5, 2, 9, 1, 7, 3, 8, 4]
+for i from 0 to a.length:
+    for j from 0 to a.length - 1:
+        if a[j] > a[j + 1]:
+            swap(a, j, j + 1)
+        end
+    end
+end
+print("sorted:", a)
+"""
+
+
+INSERTION_SORT_EXAMPLE = """\
+array a = [5, 2, 9, 1, 7, 3, 8, 4]
+for i from 1 to a.length:
+    j = i
+    done = false
+    while j > 0 and not done:
+        if a[j - 1] > a[j]:
+            swap(a, j - 1, j)
+            j = j - 1
+        else:
+            done = true
+        end
+    end
+end
+print("sorted:", a)
+"""
+
+
+SELECTION_SORT_EXAMPLE = """\
+array a = [5, 2, 9, 1, 7, 3, 8, 4]
+for i from 0 to a.length - 1:
+    min_idx = i
+    for j from i + 1 to a.length:
+        if a[j] < a[min_idx]:
+            min_idx = j
+        end
+    end
+    if min_idx != i:
+        swap(a, i, min_idx)
+    end
+end
+print("sorted:", a)
+"""
+
+
+QUICKSORT_EXAMPLE = """\
+array a = [7, 3, 9, 1, 5, 8, 2, 6, 4]
+stack lo_stack = []
+stack hi_stack = []
+lo_stack.push(0)
+hi_stack.push(a.length - 1)
+
+while lo_stack.length > 0:
+    hi = hi_stack[hi_stack.length - 1]
+    lo = lo_stack[lo_stack.length - 1]
+    hi_stack.pop()
+    lo_stack.pop()
+
+    if lo < hi:
+        pivot = a[hi]
+        i = lo - 1
+        for j from lo to hi:
+            if a[j] < pivot:
+                i = i + 1
+                swap(a, i, j)
+            end
+        end
+        swap(a, i + 1, hi)
+        p = i + 1
+
+        lo_stack.push(lo)
+        hi_stack.push(p - 1)
+        lo_stack.push(p + 1)
+        hi_stack.push(hi)
+    end
+end
+print("sorted:", a)
+"""
+
+
+DFS_EXAMPLE = """\
+graph g = undirected
+g.node("A")
+g.node("B")
+g.node("C")
+g.node("D")
+g.node("E")
+g.edge("A", "B")
+g.edge("A", "C")
+g.edge("B", "D")
+g.edge("C", "D")
+g.edge("D", "E")
+
+stack frontier = []
+set visited = []
+array order = []
+
+frontier.push("A")
+while frontier.length > 0:
+    cur = frontier[frontier.length - 1]
+    frontier.pop()
+    if not visited.contains(cur):
+        visited.add(cur)
+        order.push(cur)
+        neigh = g.neighbors(cur)
+        for i from 0 to neigh.length:
+            nxt = neigh[i]
+            if not visited.contains(nxt):
+                frontier.push(nxt)
+            end
+        end
+    end
+end
+print("visit order:", order)
+"""
+
+
+UNION_FIND_EXAMPLE = """\
+array parent = [0, 1, 2, 3, 4, 5, 6, 7]
+array edges = [0, 1, 2, 3, 4, 5, 0, 2, 1, 3, 4, 6]
+
+i = 0
+while i < edges.length:
+    x = edges[i]
+    y = edges[i + 1]
+
+    rx = x
+    while parent[rx] != rx:
+        rx = parent[rx]
+    end
+    ry = y
+    while parent[ry] != ry:
+        ry = parent[ry]
+    end
+
+    if rx != ry:
+        parent[rx] = ry
+        print("union", x, "with", y)
+    end
+    i = i + 2
+end
+print("parent array:", parent)
+"""
+
+
+BUILTIN_EXAMPLES: list[tuple[str, str, str]] = [
+    ("default", "Welcome (default)", DEFAULT_EXAMPLE),
+    ("bubble_sort", "Bubble sort", BUBBLE_SORT_EXAMPLE),
+    ("insertion_sort", "Insertion sort", INSERTION_SORT_EXAMPLE),
+    ("selection_sort", "Selection sort", SELECTION_SORT_EXAMPLE),
+    ("quicksort", "Quicksort (iterative)", QUICKSORT_EXAMPLE),
+    ("dfs", "DFS on a graph", DFS_EXAMPLE),
+    ("union_find", "Union-Find", UNION_FIND_EXAMPLE),
+]
+
+
+EXAMPLES_BY_KEY: dict[str, str] = {key: src for key, _title, src in BUILTIN_EXAMPLES}

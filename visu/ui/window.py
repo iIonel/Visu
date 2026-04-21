@@ -9,8 +9,9 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Adw, Gio, GLib, Gtk
 
 from .. import APP_ID, __version__
-from ..docs import DEFAULT_EXAMPLE
+from ..docs import BUILTIN_EXAMPLES, DEFAULT_EXAMPLE, EXAMPLES_BY_KEY
 from ..interpreter import Snapshot, run_source
+from ..render.export import export_video
 from .canvas_panel import CanvasPanel
 from .docs_window import DocsWindow
 from .editor_panel import EditorPanel
@@ -37,6 +38,7 @@ class VisuWindow(Adw.ApplicationWindow):
 
     def _build_ui(self):
         install_css()
+        self._dark_mode = True
         Adw.StyleManager.get_default().set_color_scheme(Adw.ColorScheme.PREFER_DARK)
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -92,8 +94,22 @@ class VisuWindow(Adw.ApplicationWindow):
         file_section.append("Save as…", "app.save_as")
         menu.append_section(None, file_section)
 
+        session_section = Gio.Menu()
+        session_section.append("Export as video…", "app.export_video")
+        menu.append_section(None, session_section)
+
+        examples_menu = Gio.Menu()
+        for key, title, _src in BUILTIN_EXAMPLES:
+            item = Gio.MenuItem.new(title, None)
+            item.set_action_and_target_value("app.example", GLib.Variant("s", key))
+            examples_menu.append_item(item)
+        menu.append_submenu("Load example", examples_menu)
+
+        view_section = Gio.Menu()
+        view_section.append("Dark mode", "app.dark_mode")
+        menu.append_section(None, view_section)
+
         help_section = Gio.Menu()
-        help_section.append("Load bundled example", "app.example")
         help_section.append("Pseudocode reference", "app.docs")
         help_section.append("About Visu", "app.about")
         menu.append_section(None, help_section)
@@ -282,8 +298,53 @@ class VisuWindow(Adw.ApplicationWindow):
     def show_docs(self):
         DocsWindow(self).present()
 
-    def load_example(self):
-        self._apply_source(DEFAULT_EXAMPLE, None)
+    def load_example_by_key(self, key: str):
+        source = EXAMPLES_BY_KEY.get(key)
+        if source is None:
+            return
+        self._apply_source(source, None)
+
+    def set_dark_mode(self, dark: bool):
+        self._dark_mode = dark
+        scheme = Adw.ColorScheme.PREFER_DARK if dark else Adw.ColorScheme.PREFER_LIGHT
+        Adw.StyleManager.get_default().set_color_scheme(scheme)
+
+    def export_video(self):
+        if not self._snapshots:
+            self._show_error("Run some pseudocode first — there are no snapshots to export.")
+            return
+        dialog = Gtk.FileDialog.new()
+        dialog.set_title("Export animation as video")
+        video_filter = Gtk.FileFilter()
+        video_filter.set_name("MP4 video")
+        video_filter.add_pattern("*.mp4")
+        filters = Gio.ListStore.new(Gtk.FileFilter)
+        filters.append(video_filter)
+        dialog.set_filters(filters)
+        default_name = (
+            f"{self._current_file.stem}.mp4" if self._current_file else "visu.mp4"
+        )
+        dialog.set_initial_name(default_name)
+        dialog.save(self, None, self._on_export_video_finished)
+
+    def _on_export_video_finished(self, dialog, result):
+        try:
+            file = dialog.save_finish(result)
+        except GLib.Error:
+            return
+        if file is None:
+            return
+        path = Path(file.get_path())
+        if path.suffix.lower() != ".mp4":
+            path = path.with_suffix(".mp4")
+        try:
+            frames = export_video(self._snapshots, path)
+        except Exception as e:
+            self._show_error(f"Could not export video: {e}")
+            return
+        self.editor_panel.set_output(
+            f"Exported {frames} frames → {path}"
+        )
 
     def show_about(self):
         about = Adw.AboutWindow(

@@ -7,7 +7,7 @@ import gi
 gi.require_version("Adw", "1")
 gi.require_version("Gdk", "4.0")
 gi.require_version("Gtk", "4.0")
-from gi.repository import Adw, Gdk, Gio, Gtk
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
 from . import APP_ID
 from .ui import VisuWindow
@@ -39,14 +39,24 @@ class VisuApplication(Adw.Application):
             ("redo", self._action_redo),
             ("run", self._action_run),
             ("docs", self._action_docs),
-            ("example", self._action_example),
             ("about", self._action_about),
+            ("export_video", self._action_export_video),
             ("quit", lambda *_: self.quit()),
         )
         for name, handler in actions:
             action = Gio.SimpleAction.new(name, None)
             action.connect("activate", handler)
             self.add_action(action)
+
+        example_action = Gio.SimpleAction.new("example", GLib.VariantType.new("s"))
+        example_action.connect("activate", self._action_example)
+        self.add_action(example_action)
+
+        dark_action = Gio.SimpleAction.new_stateful(
+            "dark_mode", None, GLib.Variant.new_boolean(True)
+        )
+        dark_action.connect("change-state", self._action_dark_mode)
+        self.add_action(dark_action)
 
         self.set_accels_for_action("app.open", ["<Ctrl>o"])
         self.set_accels_for_action("app.save", ["<Ctrl>s"])
@@ -85,13 +95,22 @@ class VisuApplication(Adw.Application):
         if self._window:
             self._window.show_docs()
 
-    def _action_example(self, *_):
-        if self._window:
-            self._window.load_example()
+    def _action_example(self, _action, parameter):
+        if self._window and parameter is not None:
+            self._window.load_example_by_key(parameter.get_string())
 
     def _action_about(self, *_):
         if self._window:
             self._window.show_about()
+
+    def _action_export_video(self, *_):
+        if self._window:
+            self._window.export_video()
+
+    def _action_dark_mode(self, action, value):
+        action.set_state(value)
+        if self._window:
+            self._window.set_dark_mode(value.get_boolean())
 
     def do_activate(self):
         if self._window is None:

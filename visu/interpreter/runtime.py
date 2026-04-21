@@ -17,6 +17,8 @@ class Interpreter:
     MAX_STEPS = 20000
     MAX_ITEMS_PER_STRUCTURE = 10000
     MAX_MESSAGE_CHARS = 500
+    MAX_STRING_LEN = 8192
+    MAX_INT_BITS = 256
 
     def __init__(self):
         self.vars: dict[str, Any] = {}
@@ -299,6 +301,8 @@ class Interpreter:
         op = n.data["op"]
         left = self._eval(n.data["left"])
         right = self._eval(n.data["right"])
+        if op in ("+", "*"):
+            self._check_binop_size(n.line, op, left, right)
         if op == "+": return left + right
         if op == "-": return left - right
         if op == "*": return left * right
@@ -316,6 +320,30 @@ class Interpreter:
         if op == "and": return bool(left) and bool(right)
         if op == "or": return bool(left) or bool(right)
         raise VisuRuntimeError(n.line, f"unknown operator {op}")
+
+    def _check_binop_size(self, line: int, op: str, left, right):
+        if op == "*":
+            for seq, mult in ((left, right), (right, left)):
+                if not isinstance(mult, int):
+                    continue
+                if isinstance(seq, str):
+                    if mult > 0 and len(seq) * mult > self.MAX_STRING_LEN:
+                        raise VisuRuntimeError(line, "string value too large")
+                    return
+                if isinstance(seq, list):
+                    if mult > 0 and len(seq) * mult > self.MAX_ITEMS_PER_STRUCTURE:
+                        raise VisuRuntimeError(line, "list value too large")
+                    return
+            if isinstance(left, int) and isinstance(right, int):
+                if left.bit_length() + right.bit_length() > self.MAX_INT_BITS:
+                    raise VisuRuntimeError(line, "integer value too large")
+        elif op == "+":
+            if isinstance(left, str) and isinstance(right, str):
+                if len(left) + len(right) > self.MAX_STRING_LEN:
+                    raise VisuRuntimeError(line, "string value too large")
+            elif isinstance(left, list) and isinstance(right, list):
+                if len(left) + len(right) > self.MAX_ITEMS_PER_STRUCTURE:
+                    raise VisuRuntimeError(line, "list value too large")
 
     def _eval_unop(self, n: Node):
         value = self._eval(n.data["operand"])
@@ -718,3 +746,5 @@ def run_source(src: str) -> tuple[list[Snapshot], str | None]:
         return interp.snapshots, None
     except (LexError, ParseError, VisuRuntimeError) as e:
         return interp.snapshots, str(e)
+    except RecursionError:
+        return interp.snapshots, "expression too deeply nested"

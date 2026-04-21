@@ -28,7 +28,6 @@ ENV/
 .python-version
 
 # Tests, coverage, type checkers
-tests/
 .pytest_cache/
 .cache/
 .coverage

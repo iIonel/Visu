@@ -37,10 +37,10 @@ class VisuCanvas(Gtk.DrawingArea):
         self._animator = Animator()
         self._tick_id: int | None = None
 
-        self._user_zoom = 1.0
-        self._pan_x = 0.0
-        self._pan_y = 0.0
-        self._drag_start: tuple[float, float] | None = None
+        self._user_zoom_by_structure: dict[str, float] = {}
+        self._pan_by_structure: dict[str, tuple[float, float]] = {}
+        self._drag_start: tuple[str | None, float, float] | None = None
+        self._last_mouse_xy: tuple[float, float] | None = None
 
         self._current_scale_by_structure: dict[str, float] = {}
 
@@ -73,22 +73,45 @@ class VisuCanvas(Gtk.DrawingArea):
         self.queue_draw()
 
     def zoom_in(self):
-        self._set_user_zoom(self._user_zoom * ZOOM_STEP)
+        self._apply_zoom(ZOOM_STEP)
 
     def zoom_out(self):
-        self._set_user_zoom(self._user_zoom / ZOOM_STEP)
+        self._apply_zoom(1.0 / ZOOM_STEP)
 
     def zoom_reset(self):
-        self._user_zoom = 1.0
-        self._pan_x = 0.0
-        self._pan_y = 0.0
+        self._user_zoom_by_structure.clear()
+        self._pan_by_structure.clear()
         self._recompute_targets(instant=True)
         self._ensure_ticking()
 
-    def _set_user_zoom(self, value: float):
-        self._user_zoom = max(MIN_USER_ZOOM, min(MAX_USER_ZOOM, value))
+    def _apply_zoom(self, factor: float):
+        target = self._structure_under_mouse()
+        targets = [target] if target is not None else self._all_structure_names()
+        for name in targets:
+            cur = self._user_zoom_by_structure.get(name, 1.0)
+            self._user_zoom_by_structure[name] = max(
+                MIN_USER_ZOOM, min(MAX_USER_ZOOM, cur * factor)
+            )
         self._recompute_targets(instant=True)
         self._ensure_ticking()
+
+    def _all_structure_names(self) -> list[str]:
+        if self._snapshot is None:
+            return []
+        return [s.name for s in self._snapshot.structures.values()]
+
+    def _structure_at(self, x: float, y: float) -> str | None:
+        if self._snapshot is None:
+            return None
+        for structure, region in self._regions_for(self._snapshot):
+            if region.x <= x <= region.x + region.w and region.y <= y <= region.y + region.h:
+                return structure.name
+        return None
+
+    def _structure_under_mouse(self) -> str | None:
+        if self._last_mouse_xy is None:
+            return None
+        return self._structure_at(*self._last_mouse_xy)
 
     def _recompute_targets(self, instant: bool = False):
         if self._snapshot is None:
@@ -107,21 +130,24 @@ class VisuCanvas(Gtk.DrawingArea):
             renderer = self._renderers.get(structure.kind)
             if renderer is None:
                 continue
+            zoom = self._user_zoom_by_structure.get(structure.name, 1.0)
+            pan_x, pan_y = self._pan_by_structure.get(structure.name, (0.0, 0.0))
+
             layout = renderer.layout(structure)
             if not layout.poses:
-                scales[structure.name] = 1.0 * self._user_zoom
+                scales[structure.name] = 1.0 * zoom
                 continue
 
             fit_scale = self._compute_fit(layout, region)
-            final_scale = fit_scale * self._user_zoom
+            final_scale = fit_scale * zoom
             scales[structure.name] = final_scale
 
-            content_center_x = region.cx + self._pan_x
+            content_center_x = region.cx + pan_x
             content_center_y = (
                 region.y
                 + LABEL_RESERVE
                 + (region.h - LABEL_RESERVE) / 2
-                + self._pan_y
+                + pan_y
             )
 
             for key, pose in layout.poses.items():
@@ -238,12 +264,20 @@ class VisuCanvas(Gtk.DrawingArea):
             draw_text(cr, vars_str[:200], 18, height - 12, t.font_mono, t.footer_size, t.muted)
 
     def _draw_zoom_indicator(self, cr, width: float, height: float):
-        if abs(self._user_zoom - 1.0) < 0.001 and self._pan_x == 0 and self._pan_y == 0:
-            return
+        hovered = self._structure_under_mouse()
+        if hovered is not None:
+            zoom = self._user_zoom_by_structure.get(hovered, 1.0)
+            if abs(zoom - 1.0) < 0.001:
+                return
+            text = f"{hovered} zoom {zoom * 100:.0f}%"
+        else:
+            zooms = list(self._user_zoom_by_structure.values())
+            if not zooms or all(abs(z - 1.0) < 0.001 for z in zooms):
+                return
+            text = "zoom (mixed)"
         t = self._theme
-        text = f"zoom {self._user_zoom * 100:.0f}%"
         draw_text(
-            cr, text, width - 88, 22, t.font_mono, t.footer_size, t.muted,
+            cr, text, width - 8 - 7 * len(text), 22, t.font_mono, t.footer_size, t.muted,
         )
 
     def _install_gestures(self):
@@ -252,6 +286,11 @@ class VisuCanvas(Gtk.DrawingArea):
         )
         scroll.connect("scroll", self._on_scroll)
         self.add_controller(scroll)
+
+        motion = Gtk.EventControllerMotion.new()
+        motion.connect("motion", self._on_motion)
+        motion.connect("leave", self._on_motion_leave)
+        self.add_controller(motion)
 
         drag = Gtk.GestureDrag.new()
         drag.set_button(0)
@@ -265,6 +304,14 @@ class VisuCanvas(Gtk.DrawingArea):
         self.add_controller(key)
         self.set_focusable(True)
 
+    def _on_motion(self, _controller, x: float, y: float):
+        self._last_mouse_xy = (x, y)
+        self.queue_draw()
+
+    def _on_motion_leave(self, *_):
+        self._last_mouse_xy = None
+        self.queue_draw()
+
     def _on_scroll(self, _controller, _dx: float, dy: float) -> bool:
         if dy < 0:
             self.zoom_in()
@@ -272,15 +319,23 @@ class VisuCanvas(Gtk.DrawingArea):
             self.zoom_out()
         return True
 
-    def _on_drag_begin(self, _gesture, _x: float, _y: float):
-        self._drag_start = (self._pan_x, self._pan_y)
+    def _on_drag_begin(self, _gesture, x: float, y: float):
+        target = self._structure_at(x, y)
+        pan_x, pan_y = (
+            self._pan_by_structure.get(target, (0.0, 0.0)) if target else (0.0, 0.0)
+        )
+        self._drag_start = (target, pan_x, pan_y)
 
     def _on_drag_update(self, _gesture, offset_x: float, offset_y: float):
         if self._drag_start is None:
             return
-        start_x, start_y = self._drag_start
-        self._pan_x = start_x + offset_x
-        self._pan_y = start_y + offset_y
+        target, start_x, start_y = self._drag_start
+        new_pan = (start_x + offset_x, start_y + offset_y)
+        if target is not None:
+            self._pan_by_structure[target] = new_pan
+        else:
+            for name in self._all_structure_names():
+                self._pan_by_structure[name] = new_pan
         self._recompute_targets(instant=True)
         self.queue_draw()
 
