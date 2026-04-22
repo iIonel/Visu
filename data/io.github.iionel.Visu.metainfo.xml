@@ -4,7 +4,11 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT</project_license>
   <name>Visu</name>
-  <summary>Interactive algorithm and data structure visualizer</summary>
+  <summary>Visualize algorithms step by step</summary>
+  <branding>
+    <color type="primary" scheme_preference="light">#c4d7ef</color>
+    <color type="primary" scheme_preference="dark">#1e1f26</color>
+  </branding>
   <description>
     <p>
       Visu bridges the gap between pseudocode and the mental model of how
@@ -33,20 +37,25 @@
     <category>Education</category>
   </categories>
   <screenshots>
-    <screenshot type="default">
+    <screenshot type="default" xml:lang="en">
       <image>https://raw.githubusercontent.com/iIonel/Visu/main/data/screenshots/graph-building.png</image>
       <caption>Building a directed graph step by step</caption>
     </screenshot>
-    <screenshot>
+    <screenshot xml:lang="en">
       <image>https://raw.githubusercontent.com/iIonel/Visu/main/data/screenshots/graph-complete.png</image>
       <caption>Completed graph with array visualization and output</caption>
     </screenshot>
-    <screenshot>
+    <screenshot xml:lang="en">
       <image>https://raw.githubusercontent.com/iIonel/Visu/main/data/screenshots/pseudocode-reference.png</image>
       <caption>Built-in pseudocode reference guide</caption>
     </screenshot>
   </screenshots>
   <releases>
+    <release version="0.1.4" date="2026-04-22">
+      <description>
+        <p>Shorten the AppStream summary to fit Flathub's limit and add primary branding colors for light and dark themes.</p>
+      </description>
+    </release>
     <release version="0.1.3" date="2026-04-21">
       <description>
         <p>Bundle Pillow, NumPy, imageio and imageio-ffmpeg in the Flatpak build so video export works on a clean GNOME Platform 50 runtime.</p>
