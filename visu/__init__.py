@@ -1,3 +1,3 @@
 
-__version__ = "0.1.0"
+__version__ = "0.1.4"
 APP_ID = "io.github.iionel.Visu"
